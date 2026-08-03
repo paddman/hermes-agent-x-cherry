@@ -1,0 +1,41 @@
+name: Cherry PCAP C++
+
+on:
+  pull_request:
+    paths:
+      - "native/cherry_pcap/**"
+      - "skills/security/cherry-pcap/**"
+      - ".github/workflows/cherry-pcap-cpp.yml"
+  push:
+    branches: [main]
+    paths:
+      - "native/cherry_pcap/**"
+      - "skills/security/cherry-pcap/**"
+      - ".github/workflows/cherry-pcap-cpp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install libpcap development package
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcap-dev pkg-config
+
+      - name: Configure
+        run: >-
+          cmake -S native/cherry_pcap -B native/cherry_pcap/build
+          -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build native/cherry_pcap/build --parallel
+
+      - name: Test
+        run: ctest --test-dir native/cherry_pcap/build --output-on-failure
