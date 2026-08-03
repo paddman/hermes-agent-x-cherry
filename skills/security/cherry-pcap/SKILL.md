@@ -115,7 +115,7 @@ Review these fields first:
 - `capture.packets_seen`, capture time range, BPF filter, and datalink type
 - `summary.parsed_packets` versus `summary.total_packets`
 - `summary.truncated_packets`
-- `summary.unsupported_packets`
+- `summary.unsupported_link_packets`
 - `summary.dropped_new_flows`
 
 If parse failures, truncation, or dropped flows are material, state that the
