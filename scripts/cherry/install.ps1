@@ -12,6 +12,7 @@ param(
     [switch]$SkipUpdate
 )
 
+Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
@@ -43,13 +44,15 @@ function Invoke-Checked {
 function Resolve-PythonCommand {
     $py = Get-Command py -ErrorAction SilentlyContinue
     if ($py) {
-        & $py.Source -3.11 -c "import sys; print(sys.executable)" *> $null
-        if ($LASTEXITCODE -eq 0) {
-            return @($py.Source, "-3.11")
+        foreach ($version in @("3.11", "3.12", "3.13")) {
+            & $py.Source "-$version" -c "import sys; print(sys.executable)" *> $null
+            if ($LASTEXITCODE -eq 0) {
+                return @($py.Source, "-$version")
+            }
         }
     }
 
-    foreach ($name in @("python3.11", "python")) {
+    foreach ($name in @("python3.11", "python3.12", "python3.13", "python")) {
         $candidate = Get-Command $name -ErrorAction SilentlyContinue
         if (-not $candidate) { continue }
         & $candidate.Source -c "import sys; raise SystemExit(0 if (3, 11) <= sys.version_info[:2] < (3, 14) else 1)" *> $null
@@ -61,13 +64,15 @@ function Resolve-PythonCommand {
     throw "Python 3.11, 3.12, or 3.13 was not found. Install Python, then run this script again."
 }
 
-if ($env:CHERRY_HOME -and -not $env:HERMES_HOME) {
+$cherryHomeIsSet = -not [string]::IsNullOrWhiteSpace($env:CHERRY_HOME)
+$hermesHomeIsSet = -not [string]::IsNullOrWhiteSpace($env:HERMES_HOME)
+if ($cherryHomeIsSet -and -not $hermesHomeIsSet) {
     $env:HERMES_HOME = $env:CHERRY_HOME.Trim()
 }
 
-if (-not $InstallDir) {
-    $runtimeHome = if ($env:HERMES_HOME) {
-        $env:HERMES_HOME
+if ([string]::IsNullOrWhiteSpace($InstallDir)) {
+    $runtimeHome = if (-not [string]::IsNullOrWhiteSpace($env:HERMES_HOME)) {
+        $env:HERMES_HOME.Trim()
     } else {
         Join-Path $env:LOCALAPPDATA "hermes"
     }
@@ -116,7 +121,10 @@ if (Test-Path $InstallDir) {
     Invoke-Checked $git.Source @("clone", "--branch", $Branch, "--single-branch", $RepoUrlHttps, $InstallDir)
 }
 
-$pythonCommand = Resolve-PythonCommand
+# Wrap the function call so a single returned string is still treated as an
+# array. Without @(...), PowerShell unwraps one-element arrays and [0] becomes
+# the first character of the executable path. Charming language feature.
+$pythonCommand = @(Resolve-PythonCommand)
 $pythonExe = $pythonCommand[0]
 $pythonPrefix = @()
 if ($pythonCommand.Count -gt 1) {
