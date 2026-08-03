@@ -21,8 +21,8 @@ A useful report includes:
 - A concise description and severity assessment.
 - The affected component, identified by file path and line range
   (e.g. `path/to/file.py:120-145`).
-- Environment details (`cherry version` (or `hermes version`), commit SHA, OS, Python
-  version).
+- Environment details (output of `cherry version` or `hermes version`,
+  commit SHA, OS, and Python version).
 - A reproduction against `main` or the latest release.
 - A statement of which trust boundary in §2 is crossed.
 
@@ -101,9 +101,9 @@ network, process, and (where applicable) inference policy.
 
 Cherry Agent supports this in two ways:
 
-- **Cherry Agent's own Docker image and Compose setup.** Lighter-
-  weight; the agent runs in a standard container with operator-
-  configured mounts and network policy.
+- **Cherry Agent's Docker image and Compose setup.** Lighter-weight;
+  the agent runs in a standard container with operator-configured
+  mounts and network policy.
 - **[NVIDIA OpenShell](https://github.com/NVIDIA/OpenShell)**.
   OpenShell provides per-session sandboxes with declarative policy
   across filesystem, network (L7 egress), process/syscall, and
@@ -290,7 +290,7 @@ private-disclosure channel and don't receive advisories.
   plugins are in the operator's review surface, not Cherry Agent's
   trust surface (§2.4, §2.5). A skill or plugin doing something
   malicious is the expected failure mode of one that wasn't
-  reviewed, not a vulnerability in Cherry Agent. Bugs in Hermes
+  reviewed, not a vulnerability in Cherry Agent. Bugs in Cherry
   Agent's skill-install or plugin-install path that prevent the
   operator from seeing what they're installing are in scope under
   §3.1.
