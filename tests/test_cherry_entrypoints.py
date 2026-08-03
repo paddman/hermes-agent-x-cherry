@@ -33,6 +33,22 @@ def test_cherry_home_fills_legacy_runtime_variable() -> None:
     assert env["HERMES_HOME"] == "/srv/cherry-agent"
 
 
+def test_blank_hermes_home_allows_cherry_home_alias() -> None:
+    env = {"CHERRY_HOME": " /srv/cherry-agent ", "HERMES_HOME": "   "}
+
+    cherry_entrypoints.bridge_environment(env)
+
+    assert env["HERMES_HOME"] == "/srv/cherry-agent"
+
+
+def test_blank_cherry_home_does_not_create_legacy_variable() -> None:
+    env = {"CHERRY_HOME": "   "}
+
+    cherry_entrypoints.bridge_environment(env)
+
+    assert "HERMES_HOME" not in env
+
+
 def test_existing_hermes_home_wins_when_both_are_set() -> None:
     env = {
         "CHERRY_HOME": "/srv/cherry-agent",
@@ -51,7 +67,7 @@ def test_cli_launcher_bridges_environment_before_lazy_delegate(monkeypatch) -> N
         assert os.environ["HERMES_HOME"] == "/tmp/cherry-home"
         return 23
 
-    fake_module.main = fake_main  # type: ignore[attr-defined]
+    setattr(fake_module, "main", fake_main)
     monkeypatch.setitem(sys.modules, "hermes_cli.main", fake_module)
     monkeypatch.setenv("CHERRY_HOME", "/tmp/cherry-home")
     monkeypatch.delenv("HERMES_HOME", raising=False)
