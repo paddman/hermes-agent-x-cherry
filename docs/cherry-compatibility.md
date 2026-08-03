@@ -26,7 +26,7 @@ The default data directory remains `~/.hermes` on POSIX and
 data because an interrupted or partial migration could split memory,
 credentials, and session state across two locations.
 
-The Cherry launcher accepts a new stable alias:
+The Cherry launcher accepts a stable alias:
 
 ```bash
 CHERRY_HOME="$HOME/.cherry-agent-dev" cherry
@@ -35,6 +35,29 @@ CHERRY_HOME="$HOME/.cherry-agent-dev" cherry
 Internally the launcher maps `CHERRY_HOME` to `HERMES_HOME` before the
 runtime imports. When both variables are set, `HERMES_HOME` wins to
 preserve existing deployment behavior.
+
+## Windows installer
+
+The fork-specific Windows installer is located at
+[`scripts/cherry/install.ps1`](../scripts/cherry/install.ps1). It clones
+`paddman/hermes-agent-x-cherry`, creates a local virtual environment, and
+installs both Cherry and legacy console commands.
+
+```powershell
+iex (irm https://raw.githubusercontent.com/paddman/hermes-agent-x-cherry/main/scripts/cherry/install.ps1)
+```
+
+Its update path is intentionally conservative:
+
+- an existing directory must be a Git checkout of this fork;
+- the checkout must have no uncommitted changes;
+- updates use a fast-forward-only merge;
+- the default runtime home remains the inherited Hermes location;
+- `CHERRY_HOME` may select an isolated home without silently relocating data.
+
+The inherited root `scripts/install.ps1` is retained for upstream runtime
+compatibility and still targets the Nous Research repository. It is not the
+installer for this fork.
 
 ## Current compatibility boundary
 
