@@ -121,9 +121,8 @@ if (Test-Path $InstallDir) {
     Invoke-Checked $git.Source @("clone", "--branch", $Branch, "--single-branch", $RepoUrlHttps, $InstallDir)
 }
 
-# Wrap the function call so a single returned string is still treated as an
-# array. Without @(...), PowerShell unwraps one-element arrays and [0] becomes
-# the first character of the executable path. Charming language feature.
+# PowerShell unwraps a one-element array returned from a function. Wrapping the
+# function call in @() preserves array semantics before indexing the command.
 $pythonCommand = @(Resolve-PythonCommand)
 $pythonExe = $pythonCommand[0]
 $pythonPrefix = @()

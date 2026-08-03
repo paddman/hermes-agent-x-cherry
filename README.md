@@ -60,7 +60,7 @@ The public product name of this fork is **Cherry Agent**. Some runtime identifie
 | Existing environment/config keys | `HERMES_*` and Hermes config names | Retained where changing them would break users |
 | Upstream service names | Nous Portal, Hermes upstream documentation | Their original names are preserved when referring to those actual services |
 
-This distinction is deliberate. Cherry now has a real `cherry` launcher, while the original identifiers remain available wherever removing them would break compatibility. Renaming contracts is engineering work, not a search-and-replace séance.
+This distinction is deliberate. Cherry now has a real `cherry` launcher, while the original identifiers remain available wherever removing them would break compatibility. Package, protocol, and storage renames will be handled through staged migrations rather than global replacements.
 
 ## Architecture
 
@@ -135,7 +135,7 @@ Invoke-WebRequest `
 ```
 
 > [!WARNING]
-> The inherited root script [`scripts/install.ps1`](scripts/install.ps1) remains part of the upstream-compatible runtime and currently targets the Nous Research repository. Cherry users should use `scripts/cherry/install.ps1`; otherwise the installer may faithfully install the wrong project, which is technically impressive and operationally useless.
+> The inherited root script [`scripts/install.ps1`](scripts/install.ps1) remains part of the upstream-compatible runtime and currently targets the Nous Research repository. Cherry users should use `scripts/cherry/install.ps1`; using the root installer may install the upstream project instead of this fork.
 
 Manual source installation remains available:
 
