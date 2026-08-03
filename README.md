@@ -135,8 +135,19 @@ hermes config get      # Read configuration
 hermes config set      # Change configuration
 hermes gateway         # Run messaging gateways
 hermes doctor          # Diagnose installation and configuration
-hermes update          # Update a managed installation
 ```
+
+### Update this source fork
+
+Use Git for this fork. Do not rely on `hermes update`, because that command belongs to the managed upstream installation flow and may replace fork-specific code.
+
+```bash
+git pull --ff-only origin main
+source .venv/bin/activate
+uv pip install -e ".[all]"
+```
+
+On Windows, activate the environment with `.\.venv\Scripts\Activate.ps1` before running the final install command.
 
 ## Cherry PCAP C++ security sensor
 
@@ -188,7 +199,7 @@ Cherry Agent can execute commands, access files, connect to remote systems, and 
 - Do not upload PCAP files, credentials, tokens, customer data, or private documents to external services without explicit authorization.
 - Hash and preserve original evidence before analysis.
 - Treat detections and LLM conclusions as hypotheses requiring validation.
-- Review [`SECURITY.md`](SECURITY.md) before production deployment.
+- Report vulnerabilities privately through [GitHub Security Advisories for this fork](https://github.com/paddman/hermes-agent-x-cherry/security/advisories/new), not through a public issue.
 
 ## Development
 
@@ -217,7 +228,6 @@ Read [`AGENTS.md`](AGENTS.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md) before ch
 
 - [Cherry PCAP C++ documentation](native/cherry_pcap/README.md)
 - [Cherry PCAP security skill](skills/security/cherry-pcap/SKILL.md)
-- [Security policy](SECURITY.md)
 - [Contribution guide](CONTRIBUTING.md)
 - [Developer instructions](AGENTS.md)
 - [Upstream Hermes Agent documentation](https://hermes-agent.nousresearch.com/docs/), useful for compatibility features that Cherry has not documented separately yet
