@@ -85,7 +85,7 @@ CLI / TUI / Desktop / API / Messaging Platforms
 
 ## Install from this fork
 
-The upstream one-line installer installs the upstream Hermes Agent release. To run **this Cherry fork**, clone this repository and install from its source tree.
+The upstream one-line installer installs the upstream Hermes Agent release. To run **this Cherry fork**, install from this repository instead.
 
 ### Linux, macOS, or WSL2
 
@@ -109,6 +109,35 @@ cherry
 ```
 
 ### Windows PowerShell
+
+Requirements:
+
+- Windows PowerShell 5.1 or PowerShell 7+
+- Git for Windows
+- Python 3.11, 3.12, or 3.13
+
+Run the fork-safe Cherry installer:
+
+```powershell
+iex (irm https://raw.githubusercontent.com/paddman/hermes-agent-x-cherry/main/scripts/cherry/install.ps1)
+```
+
+The installer source is [`scripts/cherry/install.ps1`](scripts/cherry/install.ps1). It clones this repository, refuses to update an unrelated or dirty checkout, creates an isolated virtual environment, installs the Cherry launch commands, and then starts setup. It does not silently move existing profiles or memory.
+
+To install without starting the setup wizard:
+
+```powershell
+$Installer = Join-Path $env:TEMP "cherry-install.ps1"
+Invoke-WebRequest `
+  "https://raw.githubusercontent.com/paddman/hermes-agent-x-cherry/main/scripts/cherry/install.ps1" `
+  -OutFile $Installer
+& $Installer -SkipSetup
+```
+
+> [!WARNING]
+> The inherited root script [`scripts/install.ps1`](scripts/install.ps1) remains part of the upstream-compatible runtime and currently targets the Nous Research repository. Cherry users should use `scripts/cherry/install.ps1`; otherwise the installer may faithfully install the wrong project, which is technically impressive and operationally useless.
+
+Manual source installation remains available:
 
 ```powershell
 git clone https://github.com/paddman/hermes-agent-x-cherry.git
@@ -141,15 +170,20 @@ cherry doctor          # Diagnose installation and configuration
 hermes version         # Legacy command remains supported
 ```
 
-Use a separate Cherry home only when you deliberately want isolated
-profiles and memory:
+Use a separate Cherry home only when you deliberately want isolated profiles and memory:
 
 ```bash
 CHERRY_HOME="$HOME/.cherry-agent-dev" cherry
 ```
 
-See [`docs/cherry-compatibility.md`](docs/cherry-compatibility.md) for
-naming, environment precedence, and the staged migration plan.
+Windows PowerShell equivalent:
+
+```powershell
+$env:CHERRY_HOME = "$env:LOCALAPPDATA\cherry-agent-dev"
+cherry
+```
+
+See [`docs/cherry-compatibility.md`](docs/cherry-compatibility.md) for naming, environment precedence, and the staged migration plan.
 
 ### Update this source fork
 
@@ -161,7 +195,7 @@ source .venv/bin/activate
 uv pip install -e ".[all]"
 ```
 
-On Windows, activate the environment with `.\.venv\Scripts\Activate.ps1` before running the final install command.
+On Windows, rerun `scripts/cherry/install.ps1`, or activate the environment with `.\.venv\Scripts\Activate.ps1` before running the final install command.
 
 ## Cherry PCAP C++ security sensor
 
@@ -201,7 +235,7 @@ sudo native/cherry_pcap/build/cherry-pcap \
 
 Live capture must be used only on systems and networks you own or are explicitly authorized to monitor. For Windows/Npcap instructions and the complete report schema, read [`native/cherry_pcap/README.md`](native/cherry_pcap/README.md).
 
-The bundled Hermes skill is located at [`skills/security/cherry-pcap/SKILL.md`](skills/security/cherry-pcap/SKILL.md).
+The bundled Cherry security skill is located at [`skills/security/cherry-pcap/SKILL.md`](skills/security/cherry-pcap/SKILL.md).
 
 ## Security model
 
