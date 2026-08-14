@@ -15,7 +15,7 @@ metadata:
 
 ใช้ skill นี้เมื่อผู้ใช้ต้องการค้นหา อ่าน ตรวจสอบ เปรียบเทียบ ปรับแต่ง หรืออธิบาย
 CherryRule รวมถึงเมื่อ event, alert, WAF log หรือ incident อ้างถึง Rule ID เช่น
-`CR-100001`
+`CWAF-GUI-200001`
 
 ฐานความรู้ที่รวมมากับ skill มี 512 Rule จาก `paddman/CherryRule` ครอบคลุม HTTP,
 injection, server-side attacks, API และ identity, bot และ business abuse,
@@ -70,7 +70,7 @@ python3 "$RULE_CLI" stats --json
 ค้นหาด้วย ID, ชื่อ, ภาษาไทย, category, tag, operator หรือคำในคำอธิบาย:
 
 ```bash
-python3 "$RULE_CLI" search CR-100001
+python3 "$RULE_CLI" search CWAF-GUI-200001
 python3 "$RULE_CLI" search "SQL injection"
 python3 "$RULE_CLI" search "prompt injection" --category ai --limit 20
 python3 "$RULE_CLI" search token --engine token_parser --severity high
@@ -80,15 +80,15 @@ python3 "$RULE_CLI" search bot --action challenge --json
 ดูค่าทางเทคนิคของ Rule:
 
 ```bash
-python3 "$RULE_CLI" show CR-100001
-python3 "$RULE_CLI" show CR-100001 --json
+python3 "$RULE_CLI" show CWAF-GUI-200001
+python3 "$RULE_CLI" show CWAF-GUI-200001 --json
 ```
 
 สร้างคำอธิบายภาษาไทยแบบละเอียด:
 
 ```bash
-python3 "$RULE_CLI" explain CR-100001
-python3 "$RULE_CLI" explain CR-100001 --json
+python3 "$RULE_CLI" explain CWAF-GUI-200001
+python3 "$RULE_CLI" explain CWAF-GUI-200001 --json
 ```
 
 หากระบบใช้คำสั่ง `python` แทน `python3` ให้เปลี่ยนเฉพาะ executable อย่าแก้ไข
