@@ -97,10 +97,10 @@ def test_cli_validate_reports_complete_catalog() -> None:
 
 
 def test_cli_explains_known_rule_in_detailed_thai() -> None:
-    result = run_cli("explain", "CR-100001")
+    result = run_cli("explain", "CWAF-GUI-200001")
 
     assert result.returncode == 0, result.stderr
-    assert "# CR-100001:" in result.stdout
+    assert "# CWAF-GUI-200001:" in result.stdout
     assert "## 1. กฎนี้ตรวจอะไร" in result.stdout
     assert "## 3. หลักการตรวจจับ" in result.stdout
     assert "## 5. False positive ที่ต้องระวัง" in result.stdout
@@ -110,16 +110,16 @@ def test_cli_explains_known_rule_in_detailed_thai() -> None:
 
 
 def test_cli_search_returns_machine_readable_results() -> None:
-    result = run_cli("search", "CR-100001", "--json")
+    result = run_cli("search", "CWAF-GUI-200001", "--json")
 
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
-    assert payload[0]["id"] == "CR-100001"
+    assert payload[0]["id"] == "CWAF-GUI-200001"
     assert THAI_RE.search(payload[0]["name_th"])
 
 
 def test_cli_unknown_rule_fails_without_inventing_an_answer() -> None:
-    result = run_cli("explain", "CR-NOT-A-REAL-RULE")
+    result = run_cli("explain", "CWAF-NOT-A-REAL-RULE")
 
     assert result.returncode == 2
     assert "ไม่พบ Rule ID" in result.stderr
