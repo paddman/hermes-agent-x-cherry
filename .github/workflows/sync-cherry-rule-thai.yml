@@ -25,11 +25,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          SOURCE_COMMIT="b38a9d17467e3ecf853b7232482c4b823a8a21ce"
+          SOURCE_COMMIT="b38a514ded9653e8ad47c8c79b17b38d8e02cb20"
           rm -rf /tmp/CherryRule
-          git clone --filter=blob:none --no-checkout \
+          git clone --filter=blob:none --single-branch \
+            --branch recovery/catalog-source-20260814 \
             https://github.com/paddman/CherryRule.git /tmp/CherryRule
-          git -C /tmp/CherryRule checkout --detach "$SOURCE_COMMIT"
           test "$(git -C /tmp/CherryRule rev-parse HEAD)" = "$SOURCE_COMMIT"
           test -f /tmp/CherryRule/audit/cherry-rules.valid.json
 
@@ -44,7 +44,7 @@ jobs:
           import json
           from pathlib import Path
 
-          source_commit = "b38a9d17467e3ecf853b7232482c4b823a8a21ce"
+          source_commit = "b38a514ded9653e8ad47c8c79b17b38d8e02cb20"
           source_path = Path("/tmp/CherryRule/audit/cherry-rules.valid.json")
           destination_dir = Path("skills/security/cherry-rule/data")
           destination_dir.mkdir(parents=True, exist_ok=True)
