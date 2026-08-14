@@ -15,7 +15,7 @@ CATALOG_PATH = SKILL_ROOT / "data" / "cherry-rules.th.json"
 PROVENANCE_PATH = SKILL_ROOT / "data" / "provenance.json"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "cherry_rule.py"
 THAI_RE = re.compile(r"[\u0E00-\u0E7F]")
-EXPECTED_SOURCE_COMMIT = "b38a9d17467e3ecf853b7232482c4b823a8a21ce"
+EXPECTED_SOURCE_COMMIT = "b38a514ded9653e8ad47c8c79b17b38d8e02cb20"
 REQUIRED_EXPLANATION_FIELDS = {
     "summary",
     "detection_logic",
