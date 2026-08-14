@@ -1,0 +1,126 @@
+name: Sync CherryRule Thai knowledge
+
+on:
+  push:
+    branches:
+      - feature/cherry-rule-thai-knowledge
+    paths:
+      - .github/workflows/sync-cherry-rule-thai.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out integration branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Fetch pinned CherryRule corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_COMMIT="b38a9d17467e3ecf853b7232482c4b823a8a21ce"
+          rm -rf /tmp/CherryRule
+          git clone --filter=blob:none --no-checkout \
+            https://github.com/paddman/CherryRule.git /tmp/CherryRule
+          git -C /tmp/CherryRule checkout --detach "$SOURCE_COMMIT"
+          test "$(git -C /tmp/CherryRule rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test -f /tmp/CherryRule/audit/cherry-rules.valid.json
+
+      - name: Copy and verify runtime data
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          from pathlib import Path
+
+          source_commit = "b38a9d17467e3ecf853b7232482c4b823a8a21ce"
+          source_path = Path("/tmp/CherryRule/audit/cherry-rules.valid.json")
+          destination_dir = Path("skills/security/cherry-rule/data")
+          destination_dir.mkdir(parents=True, exist_ok=True)
+
+          source_bytes = source_path.read_bytes()
+          source_sha256 = hashlib.sha256(source_bytes).hexdigest()
+          catalog = json.loads(source_bytes.decode("utf-8"))
+          rules = catalog.get("rules")
+
+          if not isinstance(rules, list) or len(rules) != 512:
+              raise SystemExit("expected exactly 512 validated CherryRule records")
+          if catalog.get("total_rules") != 512:
+              raise SystemExit("catalog total_rules is not 512")
+          if catalog.get("native_thai_rules") != 455:
+              raise SystemExit("catalog native_thai_rules is not 455")
+          if catalog.get("generated_thai_rules") != 57:
+              raise SystemExit("catalog generated_thai_rules is not 57")
+          if len({rule.get("id") for rule in rules if isinstance(rule, dict)}) != 512:
+              raise SystemExit("catalog Rule IDs are missing or duplicated")
+
+          destination = destination_dir / "cherry-rules.th.json"
+          destination.write_bytes(source_bytes)
+
+          provenance = {
+              "schema_version": "1.0",
+              "source_repository": "paddman/CherryRule",
+              "source_ref": "recovery/catalog-source-20260814",
+              "source_commit": source_commit,
+              "source_artifact": "audit/cherry-rules.valid.json",
+              "source_artifact_sha256": source_sha256,
+              "bundle_sha256": (
+                  "fce8f12183bdb1d796cabbbbda319704e283d6d6d998b1ea83284a252a364755"
+              ),
+              "schema_sha256": (
+                  "0416e821d800d337a6de0ee15c397b4d253e4b3dac264b6637daac58fa6dae35"
+              ),
+              "validated_rules": 512,
+              "native_thai_rules": 455,
+              "generated_thai_rules": 57,
+              "thai_explainable_rules": 512,
+              "re2_regex_rules_checked": 281,
+              "re2_compile_failures": 0,
+          }
+          (destination_dir / "provenance.json").write_text(
+              json.dumps(provenance, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print(f"copied {len(source_bytes)} bytes; sha256={source_sha256}")
+          PY
+
+      - name: Validate CLI and smoke-test explanations
+        shell: bash
+        run: |
+          set -euo pipefail
+          CLI="skills/security/cherry-rule/scripts/cherry_rule.py"
+          python3 -m py_compile "$CLI" tests/test_cherry_rule_skill.py
+          python3 "$CLI" validate
+          python3 "$CLI" stats --json > /tmp/cherry-rule-stats.json
+          python3 "$CLI" search CR-100001 --json > /tmp/cherry-rule-search.json
+          python3 "$CLI" explain CR-100001 > /tmp/cherry-rule-explanation.txt
+          grep -q '"total_rules": 512' /tmp/cherry-rule-stats.json
+          grep -q '"id": "CR-100001"' /tmp/cherry-rule-search.json
+          grep -q '## 7. วิธีตรวจยืนยันเหตุการณ์' /tmp/cherry-rule-explanation.txt
+          grep -q 'ไม่ใช่หลักฐานว่าการโจมตีสำเร็จ' /tmp/cherry-rule-explanation.txt
+
+      - name: Commit synchronized data
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/security/cherry-rule/data
+          if git diff --cached --quiet; then
+            echo "CherryRule runtime data is unchanged"
+            exit 0
+          fi
+          git diff --cached --check
+          git commit -m "feat: bundle validated CherryRule Thai knowledge [skip ci]"
+          git push origin HEAD
