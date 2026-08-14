@@ -105,10 +105,19 @@ jobs:
           python3 "$CLI" stats --json > /tmp/cherry-rule-stats.json
           python3 "$CLI" search CR-100001 --json > /tmp/cherry-rule-search.json
           python3 "$CLI" explain CR-100001 > /tmp/cherry-rule-explanation.txt
-          grep -q '"total_rules": 512' /tmp/cherry-rule-stats.json
-          grep -q '"id": "CR-100001"' /tmp/cherry-rule-search.json
-          grep -q '## 7. วิธีตรวจยืนยันเหตุการณ์' /tmp/cherry-rule-explanation.txt
-          grep -q 'ไม่ใช่หลักฐานว่าการโจมตีสำเร็จ' /tmp/cherry-rule-explanation.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          stats = json.loads(Path("/tmp/cherry-rule-stats.json").read_text(encoding="utf-8"))
+          search = json.loads(Path("/tmp/cherry-rule-search.json").read_text(encoding="utf-8"))
+          explanation = Path("/tmp/cherry-rule-explanation.txt").read_text(encoding="utf-8")
+
+          assert stats["total_rules"] == 512, stats
+          assert search and search[0]["id"] == "CR-100001", search[:3]
+          assert "## 7. วิธีตรวจยืนยันเหตุการณ์" in explanation
+          assert "ไม่ใช่หลักฐานว่าการโจมตีสำเร็จ" in explanation
+          PY
 
       - name: Commit synchronized data
         shell: bash
