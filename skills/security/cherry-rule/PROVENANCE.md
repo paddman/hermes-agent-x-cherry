@@ -9,7 +9,7 @@
 |---|---|
 | Source repository | `paddman/CherryRule` |
 | Source ref | `recovery/catalog-source-20260814` |
-| Source commit | `b38a9d17467e3ecf853b7232482c4b823a8a21ce` |
+| Source commit | `b38a514ded9653e8ad47c8c79b17b38d8e02cb20` |
 | Source artifact | `audit/cherry-rules.valid.json` |
 | Source bundle | `dist/cherry-rules.bundle.yaml` |
 | Bundle SHA-256 | `fce8f12183bdb1d796cabbbbda319704e283d6d6d998b1ea83284a252a364755` |
