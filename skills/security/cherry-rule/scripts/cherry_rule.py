@@ -537,7 +537,7 @@ def build_parser() -> argparse.ArgumentParser:
     search_parser.add_argument(
         "query",
         nargs="+",
-        help="คำค้น เช่น CR-100001, SQL injection หรือ prompt injection",
+        help="คำค้น เช่น CWAF-GUI-200001, SQL injection หรือ prompt injection",
     )
     search_parser.add_argument("--category", help="กรอง category แบบ prefix")
     search_parser.add_argument("--engine", help="กรอง engine แบบตรงค่า")

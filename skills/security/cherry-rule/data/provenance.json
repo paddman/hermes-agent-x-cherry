@@ -1,0 +1,16 @@
+{
+  "bundle_sha256": "fce8f12183bdb1d796cabbbbda319704e283d6d6d998b1ea83284a252a364755",
+  "generated_thai_rules": 57,
+  "native_thai_rules": 455,
+  "re2_compile_failures": 0,
+  "re2_regex_rules_checked": 281,
+  "schema_sha256": "0416e821d800d337a6de0ee15c397b4d253e4b3dac264b6637daac58fa6dae35",
+  "schema_version": "1.0",
+  "source_artifact": "audit/cherry-rules.valid.json",
+  "source_artifact_sha256": "cd3b78029dd44d99a84b85ef28b5c58307ae2cc595ec933f5da3b594789901f6",
+  "source_commit": "b38a514ded9653e8ad47c8c79b17b38d8e02cb20",
+  "source_ref": "recovery/catalog-source-20260814",
+  "source_repository": "paddman/CherryRule",
+  "thai_explainable_rules": 512,
+  "validated_rules": 512
+}
