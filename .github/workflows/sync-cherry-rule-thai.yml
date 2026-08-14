@@ -103,8 +103,8 @@ jobs:
           python3 -m py_compile "$CLI" tests/test_cherry_rule_skill.py
           python3 "$CLI" validate
           python3 "$CLI" stats --json > /tmp/cherry-rule-stats.json
-          python3 "$CLI" search CR-100001 --json > /tmp/cherry-rule-search.json
-          python3 "$CLI" explain CR-100001 > /tmp/cherry-rule-explanation.txt
+          python3 "$CLI" search CWAF-GUI-200001 --json > /tmp/cherry-rule-search.json
+          python3 "$CLI" explain CWAF-GUI-200001 > /tmp/cherry-rule-explanation.txt
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -114,7 +114,7 @@ jobs:
           explanation = Path("/tmp/cherry-rule-explanation.txt").read_text(encoding="utf-8")
 
           assert stats["total_rules"] == 512, stats
-          assert search and search[0]["id"] == "CR-100001", search[:3]
+          assert search and search[0]["id"] == "CWAF-GUI-200001", search[:3]
           assert "## 7. วิธีตรวจยืนยันเหตุการณ์" in explanation
           assert "ไม่ใช่หลักฐานว่าการโจมตีสำเร็จ" in explanation
           PY
